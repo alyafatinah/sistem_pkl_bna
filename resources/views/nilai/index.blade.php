@@ -94,7 +94,9 @@
                         </tbody>
                     </table>
                 </div>
-
+                <a href="{{ route('nilai.export.pdf') }}" class="btn btn-light btn-sm fw-bold">
+                    <i class="bi bi-download me-1"></i> Unduh Nilai (PDF)
+                </a>
             </div>
         </div>
 

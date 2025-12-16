@@ -172,6 +172,17 @@ Route::middleware('auth')->group(function () {
         ->name('jurnal.per_jurusan');
 });
 
+
+/*
+|--------------------------------------------------------------------------
+| EXPORT PDF
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth'])->group(function () {
+    Route::get('/nilai/export/pdf', [NilaiController::class, 'exportPdf'])
+        ->name('nilai.export.pdf');
+});
+
 /*
 |--------------------------------------------------------------------------
 | AUTH

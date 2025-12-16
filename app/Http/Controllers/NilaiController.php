@@ -7,6 +7,7 @@ use App\Models\Siswa;
 use App\Models\Jurusan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class NilaiController extends Controller
 {
@@ -173,5 +174,26 @@ class NilaiController extends Controller
             ->get();
 
         return view('nilai.per_siswa', compact('nilai', 'siswa'));
+    }
+
+
+
+    public function exportPdf()
+    {
+        // hak akses (opsional, sesuaikan)
+        if (!in_array(Auth::user()->role_id, [2])) {
+            abort(403, 'Tidak memiliki akses');
+        }
+
+
+        $nilai = Nilai::with([
+            'siswa.jurusan',
+            'siswa.guruPembimbing'
+        ])->get();
+
+        $pdf = Pdf::loadView('nilai.pdf', compact('nilai'))
+            ->setPaper('A4', 'landscape');
+
+        return $pdf->download('nilai-pkl.pdf');
     }
 }
