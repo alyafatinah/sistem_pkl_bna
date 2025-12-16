@@ -94,9 +94,13 @@
                         </tbody>
                     </table>
                 </div>
-                <a href="{{ route('nilai.export.pdf') }}" class="btn btn-light btn-sm fw-bold">
-                    <i class="bi bi-download me-1"></i> Unduh Nilai (PDF)
-                </a>
+                @if (in_array(auth()->user()->role_id, [2, 5]))
+                    <a href="{{ route('nilai.export.pdf') }}" class="btn btn-danger btn-sm fw-bold shadow-sm">
+                        <i class="bi bi-file-earmark-pdf-fill me-1"></i>
+                        Unduh Nilai
+                    </a>
+                @endif
+
             </div>
         </div>
 
