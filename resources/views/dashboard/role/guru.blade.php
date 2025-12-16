@@ -13,7 +13,7 @@
 
     <div class="row g-4">
 
-         {{-- JURUSAN --}}
+        {{-- JURUSAN --}}
         <div class="col-xl-3 col-md-6">
             <div class="card shadow-sm border-0 h-100">
                 <div class="card-body d-flex align-items-center">
@@ -22,7 +22,7 @@
                     </div>
                     <div>
                         <div class="text-muted small"></div>
-                        <div class="fs-4 fw-bold">{{ $namaJurusan }}</div>
+                        <div class="fs-5 fw-bold">{{ $namaJurusan ?? '-' }}</div>
                         <div class="fw-semibold">Jurusan Anda</div>
                     </div>
                 </div>
@@ -93,6 +93,6 @@
             </div>
         </div>
 
-       
+
     </div>
 </div>

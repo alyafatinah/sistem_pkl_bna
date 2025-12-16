@@ -156,21 +156,36 @@ class JurnalController extends Controller
     /**
      * Validasi jurnal (GURU PEMBIMBING & ADMIN)
      */
+
+
     public function setujui($id)
     {
-        $jurnal = Jurnal::findOrFail($id);
+        $jurnal = Jurnal::with('siswa')->findOrFail($id);
 
+        // Hanya guru pembimbing & admin
         if (!in_array(Auth::user()->role_id, [3, 5])) {
             abort(403, 'Anda tidak memiliki akses.');
         }
 
-        // PAKSA SIMPAN (PALING AMAN)
+        // Update status jurnal
         $jurnal->status = 'disetujui';
         $jurnal->save();
 
-        return redirect()->route('jurnal.index')
+        // Jika Guru Pembimbing
+        if (Auth::user()->role_id == 3) {
+            $jurusan_id = Auth::user()->guruPembimbing->jurusan_id;
+
+            return redirect()
+                ->route('jurnal.per_jurusan', $jurusan_id)
+                ->with('success', 'Jurnal berhasil disetujui');
+        }
+
+        // Jika Admin
+        return redirect()
+            ->route('jurnal.index')
             ->with('success', 'Jurnal berhasil disetujui');
     }
+
 
 
     public function jurnalPerJurusan($id)

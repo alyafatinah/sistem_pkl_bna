@@ -59,6 +59,12 @@ Route::middleware(['auth', 'role:1,2,5'])->group(function () {
     Route::resource('user', UserController::class);
 });
 
+Route::middleware(['auth', 'role:3'])->group(function () {
+    Route::get('/siswa/jurusan/{jurusan_id}', 
+        [SiswaController::class, 'siswaPerJurusan']
+    )->name('siswa.per_jurusan');
+
+});
 /*
 |--------------------------------------------------------------------------
 | JADWAL PKL

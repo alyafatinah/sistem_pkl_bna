@@ -23,6 +23,12 @@
                                 <th>Kegiatan</th>
                                 <th>Tempat PKL</th>
                                 <th>Dokumentasi</th>
+                                <th>Status</th>
+
+                                {{-- VALIDASI (GURU) --}}
+                                @if (in_array(auth()->user()->role_id, [3, 5]))
+                                    <th>Validasi</th>
+                                @endif
                             </tr>
                         </thead>
 
@@ -46,6 +52,37 @@
                                         @else
                                             <span class="text-muted">-</span>
                                         @endif
+
+                                         {{-- STATUS --}}
+                                <td class="text-center">
+                                    @if ($j->status == 'menunggu')
+                                        <span class="badge text-dark fst-italic">Menunggu</span>
+                                    @elseif ($j->status == 'disetujui')
+                                        <span class="badge bg-success">Disetujui</span>
+                                    @else
+                                        <span class="badge bg-secondary">-</span>
+                                    @endif
+                                </td>
+
+                                {{-- VALIDASI GURU --}}
+
+                                @if (in_array(auth()->user()->role_id, [3, 5]))
+                                    <td class="text-center">
+                                        @if ($j->status == 'menunggu')
+                                            <form action="{{ route('jurnal.setujui', $j->id) }}" method="POST">
+                                                @csrf
+                                                @method('PUT')
+                                                <button class="btn btn-success btn-sm"
+                                                    onclick="return confirm('Setujui jurnal ini?')">
+                                                    <i class="bi bi-check-circle"></i> Setujui
+                                                </button>
+                                            </form>
+                                        @else
+                                            <span class="text-muted">-</span>
+                                        @endif
+                                    </td>
+                                @endif
+
                                     </td>
 
                                 </tr>

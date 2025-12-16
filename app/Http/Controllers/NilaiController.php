@@ -10,11 +10,42 @@ use Illuminate\Support\Facades\Auth;
 
 class NilaiController extends Controller
 {
+
     public function index()
     {
-        $nilai = Nilai::with(['siswa.jurusan', 'siswa.guruPembimbing'])->get();
-        return view('nilai.index', compact('nilai'));
+        $user = Auth::user();
+
+        // ROLE 4 - SISWA (nilai milik sendiri)
+        if ($user->role_id == 4) {
+            return redirect()->route('nilai.per_siswa', $user->siswa->id);
+        }
+
+        // ROLE 1 (Kaprodi) & 3 (Guru Pembimbing)
+        if (in_array($user->role_id, [1, 3])) {
+            $jurusan_id = null;
+
+            // Guru Pembimbing
+            if ($user->role_id == 3) {
+                $jurusan_id = $user->guruPembimbing->jurusan_id;
+            }
+
+            // Kaprodi
+            if ($user->role_id == 1) {
+                $jurusan_id = $user->jurusan_id; // atau relasi kaprodi
+            }
+
+            return redirect()->route('nilai.per_jurusan', $jurusan_id);
+        }
+
+        // ROLE 2 (Humas) & 5 (Admin) → semua data
+        if (in_array($user->role_id, [2, 5])) {
+            $nilai = Nilai::with(['siswa.jurusan', 'siswa.guruPembimbing'])->get();
+            return view('nilai.index', compact('nilai'));
+        }
+
+        abort(403, 'Anda tidak memiliki akses');
     }
+
 
     public function create()
     {
