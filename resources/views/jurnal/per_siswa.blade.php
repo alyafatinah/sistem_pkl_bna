@@ -16,11 +16,14 @@
             <div class="card-header bg-primary text-white d-flex justify-content-between">
                 <span><i class="bi bi-list"></i> Daftar Jurnal Siswa</span>
 
-                @if (in_array(auth()->user()->role_id, [4, 5]))
-                    <a href="{{ route('jurnal.create') }}" class="btn btn-light btn-sm fw-bold">
-                        <i class="bi bi-plus-circle me-1"></i> Tambah Jurnal Siswa
-                    </a>
-                @endif
+
+                <a class="btn btn-light btn-sm fw-bold" href="{{ route('jurnal.create_per_siswa') }}">
+                    <i class="bi bi-plus-circle me-1"></i>
+                    <span>Tambah Jurnal</span>
+                </a>
+
+
+
             </div>
             <div class="card-body">
 
@@ -30,8 +33,9 @@
                             <tr>
                                 <th>No</th>
                                 <th>Tanggal</th>
-                                <th>Deskripsi</th>
+                                <th>Deskripsi Kegiatan</th>
                                 <th>Dokumentasi</th>
+                                <th>Status</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -52,6 +56,18 @@
                                             <span class="text-muted">-</span>
                                         @endif
                                     </td>
+
+                                    {{-- STATUS --}}
+                                    <td class="text-center">
+                                        @if ($j->status == 'menunggu')
+                                            <span class="badge text-dark fst-italic">Menunggu</span>
+                                        @elseif ($j->status == 'disetujui')
+                                            <span class="badge bg-success">Disetujui</span>
+                                        @else
+                                            <span class="badge bg-secondary">-</span>
+                                        @endif
+                                    </td>
+
                                     <td class="text-center">
                                         <a href="{{ route('jurnal.edit', $j->id) }}" class="btn btn-warning btn-sm">
                                             <i class="bi bi-pencil"></i>

@@ -57,6 +57,56 @@ class JurnalController extends Controller
             ->with('success', 'Jurnal berhasil ditambahkan');
     }
 
+    // create dan store per-siswa
+    public function createPerSiswa()
+    {
+        $siswa = auth::user()->siswa;
+
+        if (!$siswa) {
+            abort(403, 'Akun ini bukan akun siswa');
+        }
+
+        return view('jurnal.create_per_siswa', compact('siswa'));
+    }
+
+
+
+    /**
+     * Simpan jurnal siswa (otomatis milik sendiri)
+     */
+    public function storePerSiswa(Request $request)
+    {
+        $request->validate([
+            'tanggal'     => 'required|date',
+            'deskripsi'   => 'nullable|string',
+            'dokumentasi' => 'nullable|image|mimes:jpg,jpeg,png|max:5120', // 5MB
+        ]);
+
+        $siswa = auth::user()->siswa;
+
+        if (!$siswa) {
+            abort(403, 'Akun ini bukan akun siswa');
+        }
+
+        $data = [
+            'siswa_id'  => $siswa->id,
+            'tanggal'   => $request->tanggal,
+            'deskripsi' => $request->deskripsi,
+            'status'    => 'menunggu',
+        ];
+
+        // upload foto jika ada
+        if ($request->hasFile('dokumentasi')) {
+            $data['dokumentasi'] = $request->file('dokumentasi')
+                ->store('jurnal', 'public');
+        }
+
+        Jurnal::create($data);
+
+        return redirect()
+            ->route('jurnal.per_siswa', $siswa->id)
+            ->with('success', 'Jurnal berhasil ditambahkan');
+    }
     /**
      * Form edit jurnal
      */
