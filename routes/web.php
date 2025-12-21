@@ -155,7 +155,7 @@ Route::middleware('auth')->group(function () {
     | JURNAL GURU / ADMIN
     |------------------------------------------------------------------
     */
-    Route::middleware('role:3,5')->group(function () {
+    Route::middleware('role:3,4,5')->group(function () {
         Route::get('/jurnal', [JurnalController::class, 'index'])->name('jurnal.index');
         Route::get('/jurnal/create', [JurnalController::class, 'create'])->name('jurnal.create');
         Route::post('/jurnal', [JurnalController::class, 'store'])->name('jurnal.store');

@@ -64,7 +64,20 @@
                             <textarea name="alamat" class="form-control" rows="2" required></textarea>
                         </div>
 
-                        <div class="col-md-12 mb-3">
+                        <div class="col-md-6 mb-3">
+                            <label> Guru Pembimbing</label>
+                            <select name="gurupembimbing_id" class="form-select" required>
+                                <option value="">-- Pilih Guru Pembimbing --</option>
+                                @foreach ($gurupembimbing as $g)
+                                    <option value="{{ $g->id }}">
+                                        {{ $g->nama_guru }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+
+                        <div class="col-md-6 mb-3">
                             <label>Tempat PKL (Mitra)</label>
                             <select name="mitra_id" class="form-control" required>
                                 <option value="">-- Pilih Mitra PKL --</option>

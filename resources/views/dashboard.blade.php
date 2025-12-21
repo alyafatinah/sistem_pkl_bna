@@ -267,7 +267,7 @@
 
                             {{-- DATA GURU PEMBIMBING --}}
                             <a class="nav-link text-white d-flex align-items-center"
-                                href="{{ route('guru.per_jurusan', auth()->user()->kaprod->jurusan_id) }}">
+                                href="{{ route('gurupembimbing.per_jurusan', auth()->user()->kaprod->jurusan_id) }}">
                                 <i class="bi bi-people-fill nav-icon me-2"></i>
                                 <span> Guru Pembimbing </span>
                             </a>

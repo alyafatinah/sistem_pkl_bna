@@ -35,7 +35,7 @@ class SiswaController extends Controller
     {
         $jurusan = Jurusan::all();
         $mitra   = Mitra::all();
-        $guru   = GuruPembimbing::all();
+        $gurupembimbing   = GuruPembimbing::all();
 
         return view('siswa.create', compact('jurusan', 'mitra', 'gurupembimbing'));
     }
@@ -54,7 +54,7 @@ class SiswaController extends Controller
             'telp'       => 'required',
             'jurusan_id' => 'required',
             'mitra_id'   => 'required',
-            'gurupembimbing' => 'required',
+            'gurupembimbing_id' => 'required',
         ]);
 
         // 1️⃣ Buat user (login)
