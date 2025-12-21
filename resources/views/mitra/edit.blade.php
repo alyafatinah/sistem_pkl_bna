@@ -5,17 +5,12 @@
 
         {{-- JUDUL HALAMAN --}}
         <h1 class="mt-4 mb-4 text-primary fw-bold">
-            <i class="bi bi-buildings"></i> Data Mitra
+            <i class="bi bi-pencil-square"></i> Edit Data Mitra
         </h1>
 
         {{-- CARD FORM --}}
         <div class="card shadow-sm">
 
-            {{-- HEADER CARD --}}
-            <div class="card-header bg-primary text-white">
-                <i class="bi bi-pencil-square me-1"></i>
-                Edit Mitra DUDI
-            </div>
 
             {{-- BODY CARD --}}
             <div class="card-body">

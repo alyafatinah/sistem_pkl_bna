@@ -5,17 +5,12 @@
 
         {{-- JUDUL HALAMAN --}}
         <h1 class="mt-4 mb-4 text-primary fw-bold">
-            <i class="bi bi-buildings"></i> Data Mitra
+            <i class="bi bi-buildings"></i> Tambah Data Mitra DUDI
         </h1>
 
         {{-- CARD FORM --}}
         <div class="card shadow-sm">
 
-            {{-- HEADER CARD --}}
-            <div class="card-header bg-primary text-white">
-                <i class="bi bi-plus-circle me-1"></i>
-                Tambah Mitra DUDI
-            </div>
 
             {{-- BODY CARD --}}
             <div class="card-body">

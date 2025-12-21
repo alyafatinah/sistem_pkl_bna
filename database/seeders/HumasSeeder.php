@@ -16,7 +16,7 @@ class HumasSeeder extends Seeder
         User::create([
             'name' => 'Humas',
             'username' => 'humas',
-            'email' => 'humas@smkbna.com',
+            'email' => 'humas@gmail.com',
             'password' => Hash::make('humas123'),
             'role_id' => 2,
         ]);

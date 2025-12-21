@@ -24,7 +24,7 @@ class KaprodSeeder extends Seeder
                 'jurusan'      => 'Multimedia',
                 'alamat'       => 'Jl. Pendidikan No. 1',
                 'telp'         => '08122222001',
-                'email'        => 'kaprod.multimedia@smk.com',
+                'email'        => 'kaprod.multimedia@gmail.com',
             ],
             [
                 'nip'          => '197802022006021002',
@@ -32,7 +32,7 @@ class KaprodSeeder extends Seeder
                 'jurusan'      => 'Akuntansi',
                 'alamat'       => 'Jl. Pendidikan No. 2',
                 'telp'         => '08122222002',
-                'email'        => 'kaprod.akuntansi@smk.com',
+                'email'        => 'kaprod.akuntansi@gmail.com',
             ],
             [
                 'nip'          => '197903032007031003',
@@ -40,7 +40,7 @@ class KaprodSeeder extends Seeder
                 'jurusan'      => 'Kimia Industri',
                 'alamat'       => 'Jl. Pendidikan No. 3',
                 'telp'         => '08122222003',
-                'email'        => 'kaprod.kimia@smk.com',
+                'email'        => 'kaprod.kimia@gmail.com',
             ],
             [
                 'nip'          => '198004042008041004',
@@ -48,7 +48,7 @@ class KaprodSeeder extends Seeder
                 'jurusan'      => 'Farmasi',
                 'alamat'       => 'Jl. Pendidikan No. 4',
                 'telp'         => '08122222004',
-                'email'        => 'kaprod.farmasi@smk.com',
+                'email'        => 'kaprod.farmasi@gmail.com',
             ],
         ];
 

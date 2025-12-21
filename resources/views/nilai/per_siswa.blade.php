@@ -9,10 +9,18 @@
         </h1>
 
         <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <div class="fw-semibold">
+                    <i class="bi bi-list-ul me-1"></i>
+                    Daftar Siswa
+                </div>
+            </div>
+            
             <div class="card-body">
 
                 <div class="table-responsive">
                     <table class="table table-bordered table-striped table-sm text-nowrap">
+
                         <thead class="table-dark text-center">
                             <tr>
                                 <th>No</th>

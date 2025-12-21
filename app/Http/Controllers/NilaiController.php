@@ -196,4 +196,28 @@ class NilaiController extends Controller
 
         return $pdf->download('nilai-pkl.pdf');
     }
+
+
+
+public function nisByJurusan(Request $request)
+{
+    $user = Auth::user();
+
+    // pastikan guru pembimbing
+    if ($user->role_id != 3 || !$user->guruPembimbing) {
+        return response()->json([]);
+    }
+
+    $jurusanId = $user->guruPembimbing->jurusan_id;
+
+    $keyword = $request->get('q');
+
+    $siswa = Siswa::where('jurusan_id', $jurusanId)
+        ->where('nis', 'like', "%{$keyword}%")
+        ->limit(10)
+        ->get(['id', 'nis']);
+
+    return response()->json($siswa);
+}
+
 }

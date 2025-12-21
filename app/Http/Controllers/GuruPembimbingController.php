@@ -5,10 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\GuruPembimbing;
 use App\Models\User;
 use App\Models\Jurusan;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
-
 
 class GuruPembimbingController extends Controller
 {
@@ -26,33 +25,64 @@ class GuruPembimbingController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'nip'        => 'required|unique:guruPembimbing,nip',
-            'nama_guru'  => 'required',
-            'bidang'     => 'required',
-            'email'      => 'required|email|unique:users,email',
-            'jurusan_id' => 'required',
-            'telp'       => 'required',
-        ]);
+        // ✅ VALIDASI BENAR
+        $request->validate(
+            [
+                'nip' => [
+                    'required',
+                    'digits:18',
+                    'unique:gurupembimbing,nip',
+                ],
+                'nama_guru' => 'required|string|max:255',
+                'bidang' => 'required|string|max:100',
+                'email' => [
+                    'required',
+                    'email',
+                    'regex:/^[a-zA-Z0-9._%+-]+@gmail\.com$/',
+                    'unique:users,email',
+                ],
+                'jurusan_id' => 'required|exists:jurusan,id',
+                'telp' => 'required|digits_between:10,15',
+            ],
+            [
+                'nip.required' => 'NIP wajib diisi.',
+                'nip.digits' => 'NIP harus terdiri dari 18 digit angka.',
+                'nip.unique' => 'NIP sudah terdaftar.',
 
+                'nama_guru.required' => 'Nama guru wajib diisi.',
+                'bidang.required' => 'Bidang keahlian wajib diisi.',
+
+                'email.required' => 'Email wajib diisi.',
+                'email.regex' => 'Email harus menggunakan domain @gmail.com.',
+                'email.unique' => 'Email sudah terdaftar.',
+
+                'jurusan_id.required' => 'Jurusan wajib dipilih.',
+                'telp.required' => 'Nomor telepon wajib diisi.',
+            ]
+        );
+
+        // ✅ BUAT USER
         $user = User::create([
-            'name'     => $request->nama_guru,
+            'name' => $request->nama_guru,
             'username' => $request->nip,
-            'email'    => $request->email,
+            'email' => $request->email,
             'password' => Hash::make('guru123'),
-            'role_id'  => 3,
+            'role_id' => 3, // guru pembimbing
         ]);
 
+        // ✅ BUAT GURU PEMBIMBING
         GuruPembimbing::create([
-            'user_id'    => $user->id,
-            'nip'        => $request->nip,
-            'nama_guru'  => $request->nama_guru,
-            'bidang'     => $request->bidang,
+            'user_id' => $user->id,
+            'nip' => $request->nip,
+            'nama_guru' => $request->nama_guru,
+            'bidang' => $request->bidang,
             'jurusan_id' => $request->jurusan_id,
-            'telp'       => $request->telp,
+            'telp' => $request->telp,
         ]);
 
-        return redirect()->route('guruPembimbing.index')->with('success', 'Guru Pembimbing berhasil ditambahkan');
+        return redirect()
+            ->route('guruPembimbing.index')
+            ->with('success', 'Guru Pembimbing berhasil ditambahkan');
     }
 
     public function edit(GuruPembimbing $guruPembimbing)
@@ -64,40 +94,47 @@ class GuruPembimbingController extends Controller
     public function update(Request $request, GuruPembimbing $guruPembimbing)
     {
         $request->validate([
-            'nama_guru'  => 'required',
-            'bidang'    => 'required',
-            'jurusan_id' => 'required',
-            'telp'       => 'required',
+            'nama_guru' => 'required|string|max:255',
+            'bidang' => 'required|string|max:100',
+            'jurusan_id' => 'required|exists:jurusan,id',
+            'telp' => 'required|digits_between:10,15',
         ]);
 
-        $guruPembimbing->update($request->only('nama_guru', 'bidang', 'jurusan_id', 'telp'));
-        $guruPembimbing->user->update(['name' => $request->nama_guru]);
+        $guruPembimbing->update([
+            'nama_guru' => $request->nama_guru,
+            'bidang' => $request->bidang,
+            'jurusan_id' => $request->jurusan_id,
+            'telp' => $request->telp,
+        ]);
 
-        return redirect()->route('guruPembimbing.index')->with('success', 'Data guru diperbarui');
+        // update nama di tabel users
+        $guruPembimbing->user->update([
+            'name' => $request->nama_guru,
+        ]);
+
+        return redirect()
+            ->route('guruPembimbing.index')
+            ->with('success', 'Data guru berhasil diperbarui');
     }
 
     public function destroy(GuruPembimbing $guruPembimbing)
     {
-        $guruPembimbing->user->delete(); // otomatis hapus guru juga
-        return back()->with('success', 'Guru Pembimbing dihapus');
+        // hapus user → guru ikut terhapus via FK / logika aplikasi
+        $guruPembimbing->user->delete();
+
+        return back()->with('success', 'Guru Pembimbing berhasil dihapus');
     }
-
-
-
 
     public function guruPerJurusan($id)
     {
         $user = Auth::user();
 
-        // pastikan kaprodi
         if (!$user || !$user->kaprod) {
             abort(403, 'Akses ditolak');
         }
 
-        // ambil jurusan kaprodi
         $jurusanId = $user->kaprod->jurusan_id;
 
-        // cegah akses jurusan lain via URL
         if ((int) $id !== (int) $jurusanId) {
             abort(403, 'Anda tidak berhak mengakses jurusan ini');
         }

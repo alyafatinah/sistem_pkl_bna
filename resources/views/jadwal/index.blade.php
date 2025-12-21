@@ -6,7 +6,7 @@
     {{-- JUDUL HALAMAN --}}
     <div class="d-flex align-items-center gap-2 mb-3">
         <i class="bi bi-calendar-week-fill fs-3 text-primary"></i>
-        <h3 class="mb-0 fw-bold text-primary">Data Jadwal PKL</h3>
+        <h3 class="mb-0 fw-bold text-primary"> Jadwal PKL</h3>
     </div>
 
     {{-- CARD UTAMA --}}

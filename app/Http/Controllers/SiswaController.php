@@ -45,43 +45,68 @@ class SiswaController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'nis'        => 'required|unique:siswa,nis',
-            'nama'       => 'required',
-            'kelas'      => 'required',
-            'alamat'     => 'required',
-            'email'      => 'required|email|unique:users,email',
-            'telp'       => 'required',
-            'jurusan_id' => 'required',
-            'mitra_id'   => 'required',
-            'gurupembimbing_id' => 'required',
-        ]);
+        $request->validate(
+            [
+                'nis' => [
+                    'required',
+                    'digits:10',
+                    'unique:siswa,nis',
+                ],
+                'nama' => 'required|string|max:255',
+                'kelas' => 'required|string|max:50',
+                'email' => [
+                    'required',
+                    'email',
+                    'regex:/^[a-zA-Z0-9._%+-]+@gmail\.com$/',
+                    'unique:users,email',
+                ],
+                'telp' => 'required|digits_between:10,15',
+                'jurusan_id' => 'required|exists:jurusan,id',
+                'gurupembimbing_id' => 'required|exists:gurupembimbing,id',
+                'mitra_id' => 'required|exists:mitra,id',
+                'alamat' => 'required|string',
+            ],
+            [
+                'nis.required' => 'NIS wajib diisi.',
+                'nis.digits' => 'NIS harus terdiri dari 10 digit angka.',
+                'nis.unique' => 'NIS sudah terdaftar.',
 
-        // 1️⃣ Buat user (login)
+                'email.regex' => 'Email harus menggunakan domain @gmail.com.',
+                'email.unique' => 'Email sudah terdaftar.',
+
+                'jurusan_id.required' => 'Jurusan wajib dipilih.',
+                'gurupembimbing_id.required' => 'Guru pembimbing wajib dipilih.',
+                'mitra_id.required' => 'Mitra PKL wajib dipilih.',
+            ]
+        );
+
+        // 1️⃣ Buat user
         $user = User::create([
-            'name'     => $request->nama,
+            'name' => $request->nama,
             'username' => $request->nis,
-            'email'    => $request->email,
+            'email' => $request->email,
             'password' => Hash::make('siswa123'),
-            'role_id'  => 4, // role siswa
+            'role_id' => 4,
         ]);
 
         // 2️⃣ Buat siswa
         Siswa::create([
-            'user_id'   => $user->id,
-            'nis'       => $request->nis,
-            'nama'      => $request->nama,
-            'kelas'     => $request->kelas,
-            'alamat'    => $request->alamat,
-            'telp'      => $request->telp,
+            'user_id' => $user->id,
+            'nis' => $request->nis,
+            'nama' => $request->nama,
+            'kelas' => $request->kelas,
+            'alamat' => $request->alamat,
+            'telp' => $request->telp,
             'jurusan_id' => $request->jurusan_id,
-            'mitra_id'  => $request->mitra_id,
-            'gurupembimbing_id' => $request->gurupembimbing_id
+            'mitra_id' => $request->mitra_id,
+            'gurupembimbing_id' => $request->gurupembimbing_id,
         ]);
 
-        return redirect()->route('siswa.index')
+        return redirect()
+            ->route('siswa.index')
             ->with('success', 'Data siswa berhasil ditambahkan');
     }
+
 
     /**
      * Form edit siswa

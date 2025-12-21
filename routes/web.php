@@ -116,6 +116,9 @@ Route::middleware('auth')->group(function () {
         ->name('nilai.per_siswa');
 });
 
+
+Route::get('/nilai/nis-by-jurusan', [NilaiController::class, 'nisByJurusan'])
+    ->middleware('auth');
 /*
 |--------------------------------------------------------------------------
 | JURNAL PKL
@@ -183,6 +186,15 @@ Route::middleware(['auth'])->group(function () {
         ->name('nilai.export.pdf');
 });
 
+
+
+Route::get('/users/export', [UserController::class, 'export'])
+    ->middleware('auth')
+    ->name('users.export');
+
+Route::get('/users/export-pdf', [UserController::class, 'exportPdf'])
+    ->middleware('auth')
+    ->name('users.export.pdf');
 /*
 |--------------------------------------------------------------------------
 | AUTH

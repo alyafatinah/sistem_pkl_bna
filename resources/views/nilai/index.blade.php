@@ -7,6 +7,16 @@
             <i class="bi bi-award-fill"></i> Data Nilai PKL
         </h1>
 
+        <div class="mt-2 mb-2 ">
+            @if (in_array(auth()->user()->role_id, [2, 5]))
+                <a href="{{ route('nilai.export.pdf') }}" class="btn btn-danger btn-sm fw-bold shadow-sm">
+                    <i class="bi bi-file-earmark-pdf-fill me-1"></i>
+                    Unduh Nilai
+                </a>
+            @endif
+        </div>
+
+
         <div class="card shadow-sm">
             <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                 <span>
@@ -18,6 +28,7 @@
                         <i class="bi bi-plus-circle me-1"></i> Tambah Nilai
                     </a>
                 @endif
+
             </div>
 
             <div class="card-body">
@@ -94,12 +105,7 @@
                         </tbody>
                     </table>
                 </div>
-                @if (in_array(auth()->user()->role_id, [2, 5]))
-                    <a href="{{ route('nilai.export.pdf') }}" class="btn btn-danger btn-sm fw-bold shadow-sm">
-                        <i class="bi bi-file-earmark-pdf-fill me-1"></i>
-                        Unduh Nilai
-                    </a>
-                @endif
+
 
             </div>
         </div>

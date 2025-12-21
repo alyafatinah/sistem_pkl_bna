@@ -5,17 +5,11 @@
 
         {{-- JUDUL HALAMAN --}}
         <h1 class="mt-4 mb-4 text-primary fw-bold">
-            <i class="bi bi-person-badge-fill"></i> Data Guru Pembimbing
+            <i class="bi bi-pencil-square"></i> Edit Data Guru Pembimbing
         </h1>
 
         {{-- CARD FORM --}}
         <div class="card shadow-sm">
-
-            {{-- HEADER --}}
-            <div class="card-header bg-primary text-white">
-                <i class="bi bi-pencil-square me-1"></i>
-                Edit Guru Pembimbing
-            </div>
 
             {{-- BODY --}}
             <div class="card-body">
@@ -37,10 +31,12 @@
                     @method('PUT')
 
                     <div class="row g-3">
-                        {{-- NIP (READONLY) --}}
+
+                        {{-- NIP (READONLY, 18 DIGIT) --}}
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">NIP</label>
-                            <input type="text" class="form-control" value="{{ $guruPembimbing->nip }}" readonly>
+                            <input type="text" class="form-control" value="{{ $guruPembimbing->nip }}" readonly
+                                minlength="18" maxlength="18">
                         </div>
 
                         {{-- NAMA GURU --}}
@@ -50,7 +46,7 @@
                                 value="{{ old('nama_guru', $guruPembimbing->nama_guru) }}" required>
                         </div>
 
-                        {{-- Bidang --}}
+                        {{-- BIDANG KEAHLIAN --}}
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Bidang Keahlian</label>
                             <input type="text" name="bidang" class="form-control"
@@ -70,11 +66,12 @@
                             </select>
                         </div>
 
-                        {{-- TELEPON --}}
+                        {{-- NO TELEPON (ANGKA SAJA) --}}
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">No. Telepon</label>
                             <input type="text" name="telp" class="form-control"
-                                value="{{ old('telp', $guruPembimbing->telp) }}" required>
+                                value="{{ old('telp', $guruPembimbing->telp) }}" required pattern="[0-9]+"
+                                inputmode="numeric" title="Nomor telepon hanya boleh berisi angka">
                         </div>
 
                     </div>
@@ -91,8 +88,8 @@
                             Update
                         </button>
                     </div>
-
                 </form>
+
             </div>
         </div>
 

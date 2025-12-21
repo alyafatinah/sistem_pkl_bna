@@ -19,7 +19,7 @@ class GuruPembimbingSeeder extends Seeder
                 'bidang'    => 'Multimedia',
                 'jurusan_id'=> 1,
                 'telp'      => '08123456001',
-                'email'     => 'budi.multimedia@smk.com',
+                'email'     => 'budi.multimedia@gmail.com',
             ],
             [
                 'nama_guru' => 'Rina Wulandari',
@@ -27,7 +27,7 @@ class GuruPembimbingSeeder extends Seeder
                 'bidang'    => 'Desain Grafis',
                 'jurusan_id'=> 1,
                 'telp'      => '08123456002',
-                'email'     => 'rina.multimedia@smk.com',
+                'email'     => 'rina.multimedia@gmail.com',
             ],
 
             // Akuntansi (jurusan_id = 2)
@@ -37,7 +37,7 @@ class GuruPembimbingSeeder extends Seeder
                 'bidang'    => 'Akuntansi',
                 'jurusan_id'=> 2,
                 'telp'      => '08123456003',
-                'email'     => 'agus.akuntansi@smk.com',
+                'email'     => 'agus.akuntansi@gmail.com',
             ],
             [
                 'nama_guru' => 'Dewi Lestari',
@@ -45,7 +45,7 @@ class GuruPembimbingSeeder extends Seeder
                 'bidang'    => 'Keuangan',
                 'jurusan_id'=> 2,
                 'telp'      => '08123456004',
-                'email'     => 'dewi.akuntansi@smk.com',
+                'email'     => 'dewi.akuntansi@gmail.com',
             ],
 
             // Kimia Industri (jurusan_id = 3)
@@ -55,7 +55,7 @@ class GuruPembimbingSeeder extends Seeder
                 'bidang'    => 'Kimia Industri',
                 'jurusan_id'=> 3,
                 'telp'      => '08123456005',
-                'email'     => 'hendra.kimia@smk.com',
+                'email'     => 'hendra.kimia@gmail.com',
             ],
 
             // Farmasi (jurusan_id = 4)
@@ -65,7 +65,7 @@ class GuruPembimbingSeeder extends Seeder
                 'bidang'    => 'Farmasi',
                 'jurusan_id'=> 4,
                 'telp'      => '08123456006',
-                'email'     => 'siti.farmasi@smk.com',
+                'email'     => 'siti.farmasi@gmail.com',
             ],
         ];
 

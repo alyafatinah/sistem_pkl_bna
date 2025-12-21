@@ -3,7 +3,7 @@
 @section('content')
     <div class="container-fluid px-4">
 
-        <h1 class="mt-4 mb-4 text-warning fw-bold">
+        <h1 class="mt-4 mb-4 text-primary fw-bold">
             <i class="bi bi-pencil-square"></i> Edit Data Siswa
         </h1>
 
@@ -81,13 +81,14 @@
                         </div>
                     </div>
 
-                    <div class="mt-3">
-                        <button class="btn btn-warning">
-                            <i class="bi bi-save"></i> Update
-                        </button>
+                    <div class="d-flex justify-content-end gap-2 mt-4">
                         <a href="{{ route('siswa.index') }}" class="btn btn-secondary">
                             Kembali
                         </a>
+                        <button class="btn btn-primary">
+                            <i class="bi bi-save"></i> Update
+                        </button>
+
                     </div>
 
                 </form>

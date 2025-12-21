@@ -26,27 +26,33 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label>NIS</label>
-                            <input type="text" name="nis" class="form-control" required>
+                            <input type="text" name="nis" class="form-control" required maxlength="10" minlength="10"
+                                pattern="[0-9]{10}" inputmode="numeric" placeholder="Masukkan 10 digit NIS"
+                                title="NIS harus terdiri dari 10 angka">
                         </div>
 
                         <div class="col-md-6 mb-3">
                             <label>Nama Siswa</label>
-                            <input type="text" name="nama" class="form-control" required>
+                            <input type="text" name="nama" class="form-control" required
+                                placeholder="Masukkan Nama Lengkap">
                         </div>
 
                         <div class="col-md-6 mb-3">
                             <label>Kelas</label>
-                            <input type="text" name="kelas" class="form-control" required>
+                            <input type="text" name="kelas" class="form-control" required
+                                placeholder="contoh : XII MM">
                         </div>
 
                         <div class="col-md-6 mb-3">
                             <label>Email (akun login)</label>
-                            <input type="email" name="email" class="form-control" required>
+                            <input type="email" name="email" class="form-control" required
+                                pattern="^[a-zA-Z0-9._%+-]+@gmail\.com$" placeholder="contoh@gmail.com"
+                                title="Email harus menggunakan domain @gmail.com">
                         </div>
 
                         <div class="col-md-6 mb-3">
                             <label>No Telp</label>
-                            <input type="text" name="telp" class="form-control" required>
+                            <input type="text" name="telp" class="form-control" required placeholder="08xxxxxxxxxx">
                         </div>
 
                         <div class="col-md-6 mb-3">
@@ -61,7 +67,7 @@
 
                         <div class="col-md-12 mb-3">
                             <label>Alamat Siswa</label>
-                            <textarea name="alamat" class="form-control" rows="2" required></textarea>
+                            <textarea name="alamat" class="form-control" rows="2" required placeholder="contoh : Jl.Ahmad Yani..."></textarea>
                         </div>
 
                         <div class="col-md-6 mb-3">
@@ -78,7 +84,7 @@
 
 
                         <div class="col-md-6 mb-3">
-                            <label>Tempat PKL (Mitra)</label>
+                            <label>Tempat PKL (Mitra DUDI)</label>
                             <select name="mitra_id" class="form-control" required>
                                 <option value="">-- Pilih Mitra PKL --</option>
                                 @foreach ($mitra as $m)
@@ -90,13 +96,14 @@
                         </div>
                     </div>
 
-                    <div class="mt-3">
-                        <button class="btn btn-primary">
-                            <i class="bi bi-save"></i> Simpan
-                        </button>
+
+                    <div class="d-flex justify-content-end gap-2 mt-4">
                         <a href="{{ route('siswa.index') }}" class="btn btn-secondary">
                             Kembali
                         </a>
+                        <button class="btn btn-primary">
+                            <i class="bi bi-save"></i> Simpan
+                        </button>
                     </div>
 
                 </form>

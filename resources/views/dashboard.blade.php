@@ -261,7 +261,7 @@
                             <a class="nav-link text-white d-flex align-items-center"
                                 href="{{ route('siswa.per_jurusan', auth()->user()->kaprod->jurusan_id) }}">
                                 <i class="bi bi-people-fill nav-icon me-2"></i>
-                                <span>Siswa </span>
+                                <span>Data Siswa </span>
                             </a>
 
 
@@ -269,7 +269,7 @@
                             <a class="nav-link text-white d-flex align-items-center"
                                 href="{{ route('gurupembimbing.per_jurusan', auth()->user()->kaprod->jurusan_id) }}">
                                 <i class="bi bi-people-fill nav-icon me-2"></i>
-                                <span> Guru Pembimbing </span>
+                                <span> Data Guru Pembimbing </span>
                             </a>
 
                             {{-- DATA MITRA DUDI --}}
@@ -324,7 +324,7 @@
                                 <a class="nav-link text-white d-flex align-items-center"
                                     href="{{ route('guruPembimbing.index') }}">
                                     <i class="bi bi-person-badge-fill nav-icon me-2"></i>
-                                    <span>Guru Pembimbing</span>
+                                    <span>Data Guru Pembimbing</span>
                                 </a>
                             @endif
 
@@ -333,7 +333,7 @@
                                 <a class="nav-link text-white d-flex align-items-center"
                                     href="{{ route('mitra.index') }}">
                                     <i class="bi bi-buildings-fill nav-icon me-2"></i>
-                                    <span>Mitra DUDI</span>
+                                    <span>Data Mitra DUDI</span>
                                 </a>
                             @endif
 
@@ -342,7 +342,7 @@
                                 <a class="nav-link text-white d-flex align-items-center"
                                     href="{{ route('kaprod.index') }}">
                                     <i class="bi bi-person-badge-fill nav-icon me-2"></i>
-                                    <span>Kepala Prodi</span>
+                                    <span>Data Kepala Prodi</span>
                                 </a>
                             @endif
 

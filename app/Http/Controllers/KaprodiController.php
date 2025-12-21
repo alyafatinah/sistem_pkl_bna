@@ -7,123 +7,146 @@ use App\Models\User;
 use App\Models\Jurusan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 class KaprodiController extends Controller
 {
-    /**
-     * Menampilkan data Kepala Program Studi
-     */
     public function index()
     {
         $kaprod = Kaprod::with(['user', 'jurusan'])->get();
-
         return view('kaprod.index', compact('kaprod'));
     }
 
-    /**
-     * Form tambah Kaprod
-     * (hanya humas)
-     */
     public function create()
     {
         $jurusan = Jurusan::all();
-
         return view('kaprod.create', compact('jurusan'));
     }
 
     /**
-     * Simpan data Kaprod + akun user
+     * SIMPAN KAPRODI
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'nip'        => 'required|unique:kaprod,nip',
-            'nama_kaprod' => 'required',
-            'email'      => 'required|email|unique:users,email',
-            'alamat'     => 'required',
-            'telp'       => 'required',
-            'jurusan_id' => 'required',
-        ]);
+        $request->validate(
+            [
+                'nip' => [
+                    'required',
+                    'digits:18',
+                    'unique:kaprod,nip',
+                ],
+                'nama_kaprod' => 'required|string|max:255',
+                'email' => [
+                    'required',
+                    'email',
+                    'regex:/^[a-zA-Z0-9._%+-]+@gmail\.com$/',
+                    'unique:users,email',
+                ],
+                'alamat' => 'required|string',
+                'telp' => 'required|digits_between:10,15',
+                'jurusan_id' => 'required|exists:jurusan,id',
+            ],
+            [
+                'nip.required' => 'NIP wajib diisi.',
+                'nip.digits' => 'NIP harus terdiri dari 18 digit angka.',
+                'nip.unique' => 'NIP sudah terdaftar.',
 
-        // 1️⃣ Buat akun user Kaprod
+                'nama_kaprod.required' => 'Nama Kaprodi wajib diisi.',
+
+                'email.required' => 'Email wajib diisi.',
+                'email.regex' => 'Email harus menggunakan domain @gmail.com.',
+                'email.unique' => 'Email sudah terdaftar.',
+
+                'alamat.required' => 'Alamat wajib diisi.',
+                'telp.required' => 'Nomor telepon wajib diisi.',
+                'jurusan_id.required' => 'Jurusan wajib dipilih.',
+            ]
+        );
+
+        // Buat user
         $user = User::create([
-            'name'     => $request->nama_kaprod,
+            'name' => $request->nama_kaprod,
             'username' => $request->nip,
-            'email'    => $request->email,
+            'email' => $request->email,
             'password' => Hash::make('kaprod123'),
-            'role_id'  => 1, // role Kaprod
+            'role_id' => 1,
         ]);
 
-        // 2️⃣ Simpan data Kaprod
+        // Buat kaprod
         Kaprod::create([
-            'user_id'    => $user->id,
-            'nip'        => $request->nip,
+            'user_id' => $user->id,
+            'nip' => $request->nip,
             'nama_kaprod' => $request->nama_kaprod,
-            'alamat'     => $request->alamat,
-            'telp'       => $request->telp,
+            'alamat' => $request->alamat,
+            'telp' => $request->telp,
             'jurusan_id' => $request->jurusan_id,
         ]);
 
-        return redirect()->route('kaprod.index')
+        return redirect()
+            ->route('kaprod.index')
             ->with('success', 'Data Kepala Program berhasil ditambahkan');
     }
 
-    /**
-     * Form edit Kaprod
-     */
     public function edit($id)
     {
-        $kaprod  = Kaprod::with('user')->findOrFail($id);
+        $kaprod = Kaprod::with('user')->findOrFail($id);
         $jurusan = Jurusan::all();
-
         return view('kaprod.edit', compact('kaprod', 'jurusan'));
     }
 
     /**
-     * Update data Kaprod + email user
+     * UPDATE KAPRODI
      */
     public function update(Request $request, $id)
     {
         $kaprod = Kaprod::findOrFail($id);
 
-        $request->validate([
-            'nama_kaprod' => 'required',
-            'email'      => 'required|email|unique:users,email,' . $kaprod->user_id,
-            'alamat'     => 'required',
-            'telp'       => 'required',
-            'jurusan_id' => 'required',
-        ]);
+        $request->validate(
+            [
+                'nama_kaprod' => 'required|string|max:255',
+                'email' => [
+                    'required',
+                    'email',
+                    'regex:/^[a-zA-Z0-9._%+-]+@gmail\.com$/',
+                    Rule::unique('users', 'email')->ignore($kaprod->user_id),
+                ],
+                'alamat' => 'required|string',
+                'telp' => 'required|digits_between:10,15',
+                'jurusan_id' => 'required|exists:jurusan,id',
+            ],
+            [
+                'email.regex' => 'Email harus menggunakan domain @gmail.com.',
+            ]
+        );
 
-        // update akun user
+        // update user
         $kaprod->user->update([
-            'name'  => $request->nama_kaprod,
+            'name' => $request->nama_kaprod,
             'email' => $request->email,
         ]);
 
-        // update data kaprod
+        // update kaprod
         $kaprod->update([
             'nama_kaprod' => $request->nama_kaprod,
-            'alamat'     => $request->alamat,
-            'telp'       => $request->telp,
+            'alamat' => $request->alamat,
+            'telp' => $request->telp,
             'jurusan_id' => $request->jurusan_id,
         ]);
 
-        return redirect()->route('kaprod.index')
+        return redirect()
+            ->route('kaprod.index')
             ->with('success', 'Data Kepala Program berhasil diperbarui');
     }
 
-    /**
-     * Hapus Kaprod + akun user
-     */
     public function destroy($id)
     {
         $kaprod = Kaprod::findOrFail($id);
 
-        // hapus user login
         $kaprod->user()->delete();
         $kaprod->delete();
 
-        return redirect()->route('kaprod.index')
+        return redirect()
+            ->route('kaprod.index')
             ->with('success', 'Data Kepala Program berhasil dihapus');
     }
 }
