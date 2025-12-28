@@ -76,7 +76,7 @@
                                 <option value="">-- Pilih Guru Pembimbing --</option>
                                 @foreach ($gurupembimbing as $g)
                                     <option value="{{ $g->id }}">
-                                        {{ $g->nama_guru }}
+                                        {{ $g->nama_guru }} ({{ $g->jurusan->nama_jurusan ?? '-' }})
                                     </option>
                                 @endforeach
                             </select>

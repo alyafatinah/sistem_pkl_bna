@@ -8,7 +8,7 @@
         </h1>
 
         <div class="mt-2 mb-2 ">
-            @if (in_array(auth()->user()->role_id, [2, 5]))
+            @if (in_array(auth()->user()->role_id, [1, 2, 5]))
                 <a href="{{ route('nilai.export.pdf') }}" class="btn btn-danger btn-sm fw-bold shadow-sm">
                     <i class="bi bi-file-earmark-pdf-fill me-1"></i>
                     Unduh Nilai

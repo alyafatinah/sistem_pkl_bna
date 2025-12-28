@@ -24,6 +24,7 @@ class JadwalController extends Controller
     {
         $request->validate([
             'angkatan'    => 'required',
+            'periode'     => 'required',
             'jurusan_id'  => 'required|exists:jurusan,id',
             'pembekalan'  => 'required|date',
             'pengantaran' => 'required|date',
@@ -51,6 +52,7 @@ class JadwalController extends Controller
 
         $request->validate([
             'angkatan'    => 'required',
+            'periode'     => 'required',
             'jurusan_id'  => 'required|exists:jurusan,id',
             'pembekalan'  => 'required|date',
             'pengantaran' => 'required|date',

@@ -1,5 +1,5 @@
 <?php
-
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\{
     ProfileController,
@@ -12,7 +12,8 @@ use App\Http\Controllers\{
     NilaiController,
     KaprodiController,
     JurnalController,
-    SiswaLookupController
+    SiswaLookupController,
+    HumasController
 };
 use App\Models\Siswa;
 
@@ -21,7 +22,8 @@ use App\Models\Siswa;
 | ROUTE UMUM
 |--------------------------------------------------------------------------
 */
-Route::get('/', fn () => view('welcome'))->name('home');
+
+Route::get('/', fn() => view('welcome'))->name('home');
 
 /*
 |--------------------------------------------------------------------------
@@ -60,10 +62,10 @@ Route::middleware(['auth', 'role:1,2,5'])->group(function () {
 });
 
 Route::middleware(['auth', 'role:3'])->group(function () {
-    Route::get('/siswa/jurusan/{jurusan_id}', 
+    Route::get(
+        '/siswa/jurusan/{jurusan_id}',
         [SiswaController::class, 'siswaPerJurusan']
     )->name('siswa.per_jurusan');
-
 });
 /*
 |--------------------------------------------------------------------------
@@ -140,17 +142,18 @@ Route::middleware('auth')->group(function () {
     | JURNAL SISWA
     |------------------------------------------------------------------
     */
- Route::middleware(['auth', 'role:4'])->group(function () {
+    Route::middleware(['auth', 'role:4'])->group(function () {
 
-    Route::get('/jurnal/saya/create', 
-        [JurnalController::class, 'createPerSiswa']
-    )->name('jurnal.create_per_siswa');
+        Route::get(
+            '/jurnal/saya/create',
+            [JurnalController::class, 'createPerSiswa']
+        )->name('jurnal.create_per_siswa');
 
-    Route::post('/jurnal/saya', 
-        [JurnalController::class, 'storePerSiswa']
-    )->name('jurnal.store_per_siswa');
-
-});
+        Route::post(
+            '/jurnal/saya',
+            [JurnalController::class, 'storePerSiswa']
+        )->name('jurnal.store_per_siswa');
+    });
 
 
     /*
@@ -195,6 +198,42 @@ Route::get('/users/export', [UserController::class, 'export'])
 Route::get('/users/export-pdf', [UserController::class, 'exportPdf'])
     ->middleware('auth')
     ->name('users.export.pdf');
+
+
+/*
+|--------------------------------------------------------------------------
+| HUMAS
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth'])->group(function () {
+
+    // ROUTE PENGARAH (SATU PINTU)
+    Route::get('/humas', function () {
+        $user = Auth::user();
+
+        // ADMIN
+        if ($user->role_id == 5) {
+            return redirect()->route('humas.index');
+        }
+
+        // HUMAS
+        if ($user->role_id == 2) {
+            return redirect()->route('humas.index-humas');
+        }
+
+        abort(403);
+    })->name('humas.home');
+
+    // ADMIN: CRUD HUMAS
+    Route::resource('humas', HumasController::class)
+        ->except(['show', 'destroy']);
+
+    // HUMAS: PROFIL
+    Route::get('/humas/profil', [HumasController::class, 'indexHumas'])
+        ->name('humas.index-humas');
+});
+
+
 /*
 |--------------------------------------------------------------------------
 | AUTH

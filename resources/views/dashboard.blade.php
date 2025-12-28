@@ -110,9 +110,11 @@
                 <div class="sb-sidenav-menu">
                     <div class="nav">
 
+
+
                         {{-- MENU UMUM --}}
                         <div class="sb-sidenav-menu-heading text-custom-second">
-                            Core
+                            Umum
                         </div>
 
                         {{-- dashboard humas dan admin --}}
@@ -189,6 +191,15 @@
                                     href="{{ route('kaprod.index') }}">
                                     <i class="bi bi-person-badge-fill nav-icon me-2"></i>
                                     <span>Data Kepala Prodi</span>
+                                </a>
+                            @endif
+
+                            {{-- Halaman kelola Humas --}}
+                            @if (Route::has('humas.index'))
+                                <a class="nav-link text-white d-flex align-items-center"
+                                    href="{{ route('humas.index') }}">
+                                    <i class="bi bi-people-fill nav-icon me-2"></i>
+                                    <span>Data Humas</span>
                                 </a>
                             @endif
 
@@ -306,6 +317,7 @@
 
                         {{-- ===================== HUMAS ===================== --}}
                         @if (auth()->user()->role_id == 2)
+
                             <div class="sb-sidenav-menu-heading text-custom-second">
                                 Data
                             </div>
@@ -346,6 +358,7 @@
                                 </a>
                             @endif
 
+
                             <div class="sb-sidenav-menu-heading text-custom-second">
                                 Kegiatan PKL
                             </div>
@@ -355,6 +368,21 @@
                                 <i class="bi bi-file-earmark-text-fill nav-icon"></i>
                                 <span>Nilai PKL</span>
                             </a>
+
+                            {{-- Halaman kelola Humas --}}
+
+                            @if (auth()->user()->role_id == 2)
+                                <div class="sb-sidenav-menu-heading text-custom-second">
+                                    Profil
+                                </div>
+                                @if (Route::has('humas.index-humas'))
+                                    <a class="nav-link text-white d-flex align-items-center"
+                                        href="{{ route('humas.index-humas') }}">
+                                        <i class="bi bi-people-fill nav-icon me-2"></i>
+                                        <span>Profil Humas</span>
+                                    </a>
+                                @endif
+                            @endif
 
 
                         @endif

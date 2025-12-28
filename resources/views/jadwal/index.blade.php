@@ -36,7 +36,9 @@
                     {{-- HEADER TABEL --}}
                     <thead class="table-dark text-center">
                         <tr>
-                            <th width="80">Angkatan</th>
+
+                            <th width="80">Tahun Ajaran</th>
+                            <th>Periode</th>
                             <th>Jurusan</th>
                             <th>Pembekalan</th>
                             <th>Pengantaran</th>
@@ -53,6 +55,7 @@
                         @forelse ($jadwal as $j)
                             <tr>
                                 <td class="text-center fw-semibold">{{ $j->angkatan }}</td>
+                                <td>{{$j->periode}}</td>
                                 <td>{{ $j->jurusan->nama_jurusan }}</td>
                                 <td class="text-center">{{ \Carbon\Carbon::parse($j->pembekalan)->format('d-m-Y') }}</td>
                                 <td class="text-center">{{ \Carbon\Carbon::parse($j->pengantaran)->format('d-m-Y') }}</td>

@@ -11,7 +11,7 @@ class User extends Authenticatable
 {
     protected $fillable = [
         'name',
-        'username',   // <-- TAMBAHKAN INI
+        'username',
         'email',
         'password',
         'role_id'
@@ -41,5 +41,10 @@ class User extends Authenticatable
     public function kaprod()
     {
         return $this->hasOne(Kaprod::class);
+    }
+
+    public function humas()
+    {
+        return $this->hasOne(Humas::class);
     }
 }
