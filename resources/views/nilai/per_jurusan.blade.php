@@ -44,6 +44,7 @@
                                 <th>Komentar</th>
                                 <th>Tempat PKL</th>
                                 <th>Status</th>
+                                <th>Validasi Kaprodi</th>
 
                                 @if (in_array(auth()->user()->role_id, [3, 5]))
                                     <th width="18%">Aksi</th>
@@ -78,6 +79,21 @@
                                             </span>
                                         @endif
                                     </td>
+                                
+                                   
+                                    <td>
+                                        {{-- Validasi Kaprodi --}}
+                                            @if (auth()->user()->role_id == 1 && !$n->validasi_kaprod)
+                                                <form action="{{ route('nilai.validasi', $n->id) }}" method="POST"
+                                                    class="d-inline">
+                                                    @csrf
+                                                    <button class="btn btn-success btn-sm">
+                                                        Valid
+                                                    </button>
+                                                </form>
+                                            @endif
+                                    </td>
+
 
                                     {{-- Aksi --}}
                                     @if (in_array(auth()->user()->role_id, [3, 5]))
@@ -101,16 +117,7 @@
                                                 </form>
                                             @endif
 
-                                            {{-- Validasi Kaprodi --}}
-                                            @if (auth()->user()->role_id == 1 && !$n->validasi_kaprod)
-                                                <form action="{{ route('nilai.validasi', $n->id) }}" method="POST"
-                                                    class="d-inline">
-                                                    @csrf
-                                                    <button class="btn btn-success btn-sm">
-                                                        <i class="bi bi-check-circle"></i> Validasi
-                                                    </button>
-                                                </form>
-                                            @endif
+                                            
 
                                         </td>
                                     @endif

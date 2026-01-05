@@ -24,11 +24,25 @@ class NilaiController extends Controller
         }
 
         // ROLE 3 - GURU PEMBIMBING
+        // if ($user->role_id == 3 && $user->guruPembimbing) {
+        //     return redirect()->route(
+        //         'nilai.per_jurusan',
+        //         $user->guruPembimbing->jurusan_id
+        //     );
+        // }
+
+        // ======================
+        // Jika guru pembimbing (role_id = 3)
         if ($user->role_id == 3 && $user->guruPembimbing) {
-            return redirect()->route(
-                'nilai.per_jurusan',
-                $user->guruPembimbing->jurusan_id
-            );
+
+            $nilai = Nilai::with('siswa')
+                ->whereHas('siswa', function ($q) use ($user) {
+                    $q->where('gurupembimbing_id', $user->guruPembimbing->id);
+                })
+                ->latest()
+                ->get();
+
+            return view('nilai.index', compact('nilai'));
         }
 
         // ROLE 1 - KAPRODI
