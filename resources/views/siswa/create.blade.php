@@ -40,7 +40,7 @@
                         <div class="col-md-6 mb-3">
                             <label>Kelas</label>
                             <input type="text" name="kelas" class="form-control" required
-                                placeholder="contoh : XII MM">
+                                placeholder="contoh : XII Multimedia ">
                         </div>
 
                         <div class="col-md-6 mb-3">

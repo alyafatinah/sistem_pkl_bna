@@ -3,10 +3,12 @@
 @section('content')
     <div class="container-fluid px-4">
 
+
         <h1 class="mt-4 mb-4 text-primary fw-bold">
             <i class="bi bi-journal-text"></i>
             Jurnal Siswa Jurusan {{ $jurusan->nama_jurusan }}
         </h1>
+
 
         <div class="card shadow-sm">
             <div class="card-body">
@@ -88,7 +90,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="text-center text-muted">
+                                    <td colspan="9" class="text-center text-muted">
                                         Belum ada jurnal siswa
                                     </td>
                                 </tr>

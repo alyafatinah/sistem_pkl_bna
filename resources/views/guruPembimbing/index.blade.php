@@ -13,7 +13,7 @@
                 @if (in_array(auth()->user()->role_id, [2, 5]))
                     <a href="{{ route('guruPembimbing.create') }}" class="btn btn-light btn-sm fw-bold">
                         <i class="bi bi-plus-circle me-1"></i>
-                        Tambah Mitra DUDI
+                        Tambah Guru Pembimbing
                     </a>
                 @endif
             </div>

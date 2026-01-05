@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Jurnal;
 use Illuminate\Http\Request;
 use App\Models\Jurusan;
+use App\Models\Siswa;
 use Illuminate\Support\Facades\Auth;
 
 class JurnalController extends Controller
@@ -14,8 +15,40 @@ class JurnalController extends Controller
      */
     public function index()
     {
-        $jurnal = Jurnal::with('siswa')->get();
-        return view('jurnal.index', compact('jurnal'));
+
+        $user = auth::user();
+
+        // ======================
+        // SISWA
+        // ======================
+        if ($user->role_id == 4 && $user->siswa) {
+            return redirect()->route('jurnal.per_siswa', $user->siswa->id);
+        }
+
+        // ======================
+        // GURU PEMBIMBING
+        // ======================
+        if ($user->role_id == 3 && $user->guruPembimbing) {
+
+            $jurnal = Jurnal::with(['siswa'])
+                ->whereHas('siswa', function ($q) use ($user) {
+                    $q->where('gurupembimbing_id', $user->guruPembimbing->id);
+                })
+                ->latest()
+                ->get();
+
+            return view('jurnal.index', compact('jurnal'));
+        }
+
+        // ======================
+        // ADMIN / HUMAS / KAPRODI
+        // ======================
+        if (in_array($user->role_id, [1, 2, 5])) {
+            $jurnal = Jurnal::with('siswa')->latest()->get();
+            return view('jurnal.index', compact('jurnal'));
+        }
+
+        abort(403);
     }
 
     /**
@@ -233,30 +266,26 @@ class JurnalController extends Controller
         return view('jurnal.per_jurusan', compact('jurnal', 'jurusan'));
     }
 
+
     public function jurnalPerSiswa($id)
     {
         $user = Auth::user();
 
-        // pastikan user adalah siswa
-        if (!$user->siswa) {
-            abort(403, 'Akses ditolak');
+        $siswa = Siswa::findOrFail($id);
+
+        // SISWA hanya boleh miliknya sendiri
+        if ($user->role_id == 4 && $user->siswa->id != $siswa->id) {
+            abort(403);
         }
 
-        $siswa = $user->siswa;
-
-        // =========================
-        // CEK KEPEMILIKAN DATA
-        // =========================
-        if ((int) $id !== (int) $siswa->id) {
-            abort(403, 'Anda tidak berhak mengakses jurnal ini');
+        // GURU PEMBIMBING hanya siswa bimbingannya
+        if ($user->role_id == 3) {
+            if ($siswa->gurupembimbing_id != $user->guruPembimbing->id) {
+                abort(403, 'Bukan siswa bimbingan Anda');
+            }
         }
 
-        // =========================
-        // AMBIL JURNAL MILIK SISWA
-        // =========================
-        $jurnal = Jurnal::where('siswa_id', $siswa->id)
-            ->orderBy('tanggal', 'desc')
-            ->get();
+        $jurnal = Jurnal::where('siswa_id', $siswa->id)->latest()->get();
 
         return view('jurnal.per_siswa', compact('jurnal', 'siswa'));
     }

@@ -2,10 +2,17 @@
 
 @section('content')
     <div class="container-fluid px-4">
+        @if (auth()->user()->role_id == 3)
+            <h1 class="mt-4 mb-4 text-primary fw-bold">
+                <i class="bi bi-person-badge-fill"></i> Jurnal Siswa Bimbingan
+            </h1>
+        @endif
 
-        <h1 class="mt-4 mb-4 text-primary fw-bold">
-            <i class="bi bi-person-badge-fill"></i> Jurnal Harian PKL Siswa
-        </h1>
+        @if (in_array(auth()->user()->role_id, [1,2, 4, 5]))
+            <h1 class="mt-4 mb-4 text-primary fw-bold">
+                <i class="bi bi-person-badge-fill"></i> Jurnal Harian Siswa 
+            </h1>
+        @endif
 
         <div class="card shadow-sm">
             <div class="card-header bg-primary text-white d-flex justify-content-between">
@@ -59,12 +66,12 @@
                                 <td>{{ $j->deskripsi }}</td>
 
                                 <td class="text-center">
-                                        @if ($j->dokumentasi)
-                                            <a href="{{ asset('storage/' . $j->dokumentasi) }}" target="_blank"
-                                                class="btn btn-sm btn-primary">
-                                                <i class="bi bi-image"></i> Lihat
-                                            </a>
-                                        @else
+                                    @if ($j->dokumentasi)
+                                        <a href="{{ asset('storage/' . $j->dokumentasi) }}" target="_blank"
+                                            class="btn btn-sm btn-primary">
+                                            <i class="bi bi-image"></i> Lihat
+                                        </a>
+                                    @else
                                         <span class="text-muted">-</span>
                                     @endif
                                 </td>

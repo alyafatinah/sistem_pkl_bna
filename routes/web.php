@@ -1,4 +1,5 @@
 <?php
+
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\{
@@ -53,7 +54,7 @@ Route::middleware('auth')->group(function () {
 | DATA MASTER (ADMIN / HUMAS)
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', 'role:1,2,5'])->group(function () {
+Route::middleware(['auth', 'role:1, 3,2,5'])->group(function () {
     Route::resource('siswa', SiswaController::class);
     Route::resource('guruPembimbing', GuruPembimbingController::class);
     Route::resource('mitra', MitraController::class);
@@ -61,12 +62,25 @@ Route::middleware(['auth', 'role:1,2,5'])->group(function () {
     Route::resource('user', UserController::class);
 });
 
-Route::middleware(['auth', 'role:3'])->group(function () {
+Route::middleware(['auth', 'role:1'])->group(function () {
     Route::get(
         '/siswa/jurusan/{jurusan_id}',
         [SiswaController::class, 'siswaPerJurusan']
     )->name('siswa.per_jurusan');
 });
+//|--------------------------------------------------------------------------
+Route::get(
+    '/guru-pembimbing/per-jurusan/{jurusan_id}',
+    [GuruPembimbingController::class, 'guruPerJurusan']
+)->name('gurupembimbing.per_jurusan');
+
+// Route::get('/siswa/per-jurusan/{jurusan}',
+//     [SiswaController::class, 'perJurusan']
+// )->middleware('role:1,3')
+//  ->name('siswa.per_jurusan');
+
+
+
 /*
 |--------------------------------------------------------------------------
 | JADWAL PKL
@@ -121,6 +135,20 @@ Route::middleware('auth')->group(function () {
 
 Route::get('/nilai/nis-by-jurusan', [NilaiController::class, 'nisByJurusan'])
     ->middleware('auth');
+
+Route::middleware(['auth', 'role:1'])->group(function () {
+    Route::post('/nilai/{nilai}/validasi', [NilaiController::class, 'validasi'])
+        ->name('nilai.validasi');
+});
+
+Route::middleware(['auth', 'role:1,3,5'])->group(function () {
+    Route::get(
+        '/nilai/jurusan/{jurusan_id}/pdf',
+        [\App\Http\Controllers\NilaiController::class, 'exportPdfPerJurusan']
+    )->name('nilai.export_jurusan');
+});
+
+
 /*
 |--------------------------------------------------------------------------
 | JURNAL PKL

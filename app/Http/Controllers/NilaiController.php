@@ -11,164 +11,198 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class NilaiController extends Controller
 {
-
+    /* =========================================================
+     * INDEX (REDIRECT SESUAI ROLE)
+     * ========================================================= */
     public function index()
     {
         $user = Auth::user();
 
         // ROLE 4 - SISWA (nilai milik sendiri)
-        if ($user->role_id == 4) {
+        if ($user->role_id == 4 && $user->siswa) {
             return redirect()->route('nilai.per_siswa', $user->siswa->id);
         }
 
-        // ROLE 1 (Kaprodi) & 3 (Guru Pembimbing)
-        if (in_array($user->role_id, [1, 3])) {
-            $jurusan_id = null;
-
-            // Guru Pembimbing
-            if ($user->role_id == 3) {
-                $jurusan_id = $user->guruPembimbing->jurusan_id;
-            }
-
-            // Kaprodi
-            if ($user->role_id == 1) {
-                $jurusan_id = $user->jurusan_id; // atau relasi kaprodi
-            }
-
-            return redirect()->route('nilai.per_jurusan', $jurusan_id);
+        // ROLE 3 - GURU PEMBIMBING
+        if ($user->role_id == 3 && $user->guruPembimbing) {
+            return redirect()->route(
+                'nilai.per_jurusan',
+                $user->guruPembimbing->jurusan_id
+            );
         }
 
-        // ROLE 2 (Humas) & 5 (Admin) → semua data
+        // ROLE 1 - KAPRODI
+        if ($user->role_id == 1 && $user->kaprod) {
+            return redirect()->route(
+                'nilai.per_jurusan',
+                $user->kaprod->jurusan_id
+            );
+        }
+
+        // ROLE 2 (HUMAS) & 5 (ADMIN) → semua data
         if (in_array($user->role_id, [2, 5])) {
-            $nilai = Nilai::with(['siswa.jurusan', 'siswa.guruPembimbing'])->get();
+            $nilai = Nilai::with(['siswa.jurusan', 'siswa.guruPembimbing'])
+                ->latest()
+                ->get();
+
             return view('nilai.index', compact('nilai'));
         }
 
         abort(403, 'Anda tidak memiliki akses');
     }
 
-
+    /* =========================================================
+     * CREATE
+     * ========================================================= */
     public function create()
     {
         return view('nilai.create');
     }
 
+    /* =========================================================
+     * STORE
+     * ========================================================= */
     public function store(Request $request)
     {
         $request->validate([
             'siswa_id' => 'required|exists:siswa,id|unique:nilai,siswa_id',
             'nilai'    => 'required|integer|min:0|max:100',
-            'komentar' => 'required',
+            'komentar' => 'required|string',
         ]);
+
+        $nilaiAngka = $request->nilai;
+
+        // HITUNG PREDIKAT OTOMATIS
+        $predikat = match (true) {
+            $nilaiAngka >= 90 => 'A',
+            $nilaiAngka >= 80 => 'B',
+            $nilaiAngka >= 70 => 'C',
+            default           => 'D',
+        };
 
         Nilai::create([
-            'siswa_id' => $request->siswa_id,
-            'nilai'    => $request->nilai,
-            'komentar' => $request->komentar,
+            'siswa_id'        => $request->siswa_id,
+            'nilai'           => $nilaiAngka,
+            'predikat'        => $predikat,
+            'komentar'        => $request->komentar,
+            'validasi_kaprod' => false,
         ]);
 
-        return redirect()->route('nilai.index')
+        return redirect()
+            ->route('nilai.index')
             ->with('success', 'Nilai berhasil disimpan');
     }
 
+    /* =========================================================
+     * EDIT
+     * ========================================================= */
     public function edit(Nilai $nilai)
     {
         $nilai->load(['siswa.jurusan', 'siswa.guruPembimbing']);
         return view('nilai.edit', compact('nilai'));
     }
 
+    /* =========================================================
+     * UPDATE
+     * ========================================================= */
     public function update(Request $request, Nilai $nilai)
     {
         $request->validate([
             'nilai'    => 'required|integer|min:0|max:100',
-            'komentar' => 'required',
+            'komentar' => 'required|string',
         ]);
 
+        $nilaiAngka = $request->nilai;
+
+        $predikat = match (true) {
+            $nilaiAngka >= 90 => 'A',
+            $nilaiAngka >= 80 => 'B',
+            $nilaiAngka >= 70 => 'C',
+            default           => 'D',
+        };
+
         $nilai->update([
-            'nilai'    => $request->nilai,
+            'nilai'    => $nilaiAngka,
+            'predikat' => $predikat,
             'komentar' => $request->komentar,
         ]);
 
-        return redirect()->route('nilai.index')
+        return redirect()
+            ->route('nilai.index')
             ->with('success', 'Nilai berhasil diperbarui');
     }
 
+    /* =========================================================
+     * DELETE
+     * ========================================================= */
     public function destroy(Nilai $nilai)
     {
         $nilai->delete();
-        return redirect()->route('nilai.index')
+
+        return redirect()
+            ->route('nilai.index')
             ->with('success', 'Nilai berhasil dihapus');
     }
 
-
-
-    public function nilaiPerJurusan($id)
+    /* =========================================================
+     * NILAI PER JURUSAN (KAPRODI / GURU)
+     * ========================================================= */
+    public function nilaiPerJurusan($jurusan_id)
     {
         $user = Auth::user();
 
-        // ===============================
-        // CEK ROLE & AMBIL JURUSAN USER
-        // ===============================
+        // KAPRODI
         if ($user->role_id == 1) {
-            // KAPRODI
             if (!$user->kaprod) {
-                abort(403, 'Akses ditolak');
+                abort(403, 'Data kaprodi tidak ditemukan');
             }
-            $jurusanUserId = $user->kaprod->jurusan_id;
-        } elseif ($user->role_id == 3) {
-            // GURU PEMBIMBING
+            $jurusan_id = $user->kaprod->jurusan_id;
+        }
+
+        // GURU PEMBIMBING
+        elseif ($user->role_id == 3) {
             if (!$user->guruPembimbing) {
-                abort(403, 'Akses ditolak');
+                abort(403, 'Data guru pembimbing tidak ditemukan');
             }
-            $jurusanUserId = $user->guruPembimbing->jurusan_id;
+            $jurusan_id = $user->guruPembimbing->jurusan_id;
+        }
+
+        // ADMIN
+        elseif ($user->role_id == 5) {
+            // pakai jurusan dari URL
         } else {
-            abort(403, 'Akses ditolak');
+            abort(403, 'Anda tidak memiliki akses');
         }
 
-        // ===============================
-        // CEK URL vs JURUSAN USER
-        // ===============================
-        if ((int) $id !== (int) $jurusanUserId) {
-            abort(403, 'Anda tidak berhak mengakses jurusan ini');
-        }
-
-        // ===============================
-        // AMBIL DATA NILAI
-        // ===============================
-        $jurusan = Jurusan::findOrFail($id);
+        $jurusan = Jurusan::findOrFail($jurusan_id);
 
         $nilai = Nilai::with(['siswa.jurusan', 'siswa.mitra'])
-            ->whereHas('siswa', function ($q) use ($id) {
-                $q->where('jurusan_id', $id);
+            ->whereHas('siswa', function ($q) use ($jurusan_id) {
+                $q->where('jurusan_id', $jurusan_id);
             })
-            ->orderBy('created_at', 'desc')
+            ->latest()
             ->get();
 
         return view('nilai.per_jurusan', compact('nilai', 'jurusan'));
     }
 
-
+    /* =========================================================
+     * NILAI PER SISWA
+     * ========================================================= */
     public function nilaiPerSiswa($id)
     {
         $user = Auth::user();
 
-        // pastikan user adalah siswa
         if (!$user->siswa) {
             abort(403, 'Akses ditolak');
         }
 
-        $siswa = $user->siswa;
-
-        // =========================
-        // CEK KEPEMILIKAN DATA
-        // =========================
-        if ((int) $id !== (int) $siswa->id) {
+        if ((int) $id !== (int) $user->siswa->id) {
             abort(403, 'Anda tidak berhak mengakses nilai ini');
         }
 
-        // =========================
-        // AMBIL NILAI MILIK SISWA
-        // =========================
+        $siswa = $user->siswa;
+
         $nilai = Nilai::where('siswa_id', $siswa->id)
             ->latest()
             ->get();
@@ -176,15 +210,34 @@ class NilaiController extends Controller
         return view('nilai.per_siswa', compact('nilai', 'siswa'));
     }
 
-
-
-    public function exportPdf()
+    /* =========================================================
+     * VALIDASI KAPRODI
+     * ========================================================= */
+    public function validasi($id)
     {
-        // hak akses (opsional, sesuaikan)
-        if (!in_array(Auth::user()->role_id, [2])) {
-            abort(403, 'Tidak memiliki akses');
+        $user = Auth::user();
+
+        if ($user->role_id != 1) {
+            abort(403, 'Hanya Kaprodi yang dapat memvalidasi');
         }
 
+        $nilai = Nilai::findOrFail($id);
+
+        $nilai->update([
+            'validasi_kaprod' => true,
+        ]);
+
+        return back()->with('success', 'Nilai berhasil divalidasi Kaprodi');
+    }
+
+    /* =========================================================
+     * EXPORT PDF
+     * ========================================================= */
+    public function exportPdf()
+    {
+        if (!in_array(Auth::user()->role_id, [1, 2, 5])) {
+            abort(403, 'Tidak memiliki akses');
+        }
 
         $nilai = Nilai::with([
             'siswa.jurusan',
@@ -197,27 +250,87 @@ class NilaiController extends Controller
         return $pdf->download('nilai-pkl.pdf');
     }
 
+    /* =========================================================
+     * AJAX NIS BY JURUSAN (GURU PEMBIMBING)
+     * ========================================================= */
+    public function nisByJurusan(Request $request)
+    {
+        $user = Auth::user();
 
+        if ($user->role_id != 3 || !$user->guruPembimbing) {
+            return response()->json([]);
+        }
 
-public function nisByJurusan(Request $request)
-{
-    $user = Auth::user();
+        $jurusanId = $user->guruPembimbing->jurusan_id;
+        $keyword   = $request->get('q');
 
-    // pastikan guru pembimbing
-    if ($user->role_id != 3 || !$user->guruPembimbing) {
-        return response()->json([]);
+        $siswa = Siswa::where('jurusan_id', $jurusanId)
+            ->where('nis', 'like', "%{$keyword}%")
+            ->limit(10)
+            ->get(['id', 'nis']);
+
+        return response()->json($siswa);
     }
 
-    $jurusanId = $user->guruPembimbing->jurusan_id;
+    public function exportPdfPerJurusan($jurusan_id)
+    {
+        $user = Auth::user();
 
-    $keyword = $request->get('q');
+        // ==========================
+        // VALIDASI AKSES JURUSAN
+        // ==========================
 
-    $siswa = Siswa::where('jurusan_id', $jurusanId)
-        ->where('nis', 'like', "%{$keyword}%")
-        ->limit(10)
-        ->get(['id', 'nis']);
+        // KAPRODI
+        if ($user->role_id == 1) {
+            if (!$user->kaprod) {
+                abort(403, 'Data kaprodi tidak ditemukan');
+            }
+            $jurusan_id = $user->kaprod->jurusan_id;
+        }
 
-    return response()->json($siswa);
-}
+        // GURU PEMBIMBING
+        elseif ($user->role_id == 3) {
+            if (!$user->guruPembimbing) {
+                abort(403, 'Data guru pembimbing tidak ditemukan');
+            }
+            $jurusan_id = $user->guruPembimbing->jurusan_id;
+        }
 
+        // ADMIN
+        elseif ($user->role_id == 5) {
+            // pakai jurusan dari URL
+        } else {
+            abort(403, 'Anda tidak memiliki akses');
+        }
+
+        // ==========================
+        // AMBIL DATA
+        // ==========================
+
+        $jurusan = Jurusan::findOrFail($jurusan_id);
+
+        $nilai = Nilai::with([
+            'siswa.jurusan',
+            'siswa.guruPembimbing',
+            'siswa.mitra'
+        ])
+            ->whereHas('siswa', function ($q) use ($jurusan_id) {
+                $q->where('jurusan_id', $jurusan_id);
+            })
+            ->orderBy('nilai', 'desc')
+            ->get();
+
+        // ==========================
+        // GENERATE PDF
+        // ==========================
+
+        $pdf = Pdf::loadView(
+            'nilai.pdf_per_jurusan',
+            compact('nilai', 'jurusan')
+        )->setPaper('A4', 'landscape');
+
+        return $pdf->download(
+            'nilai-jurusan-' . strtolower($jurusan->nama_jurusan) . '.pdf'
+        );
+    }
 }

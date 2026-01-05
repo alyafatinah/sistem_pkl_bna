@@ -18,16 +18,48 @@ class SiswaController extends Controller
      */
     public function index()
     {
-        $siswa = Siswa::with([
-            'user',
-            'jurusan',
-            'mitra',
-            'gurupembimbing'
-        ])->get();
+        $user = Auth::user();
 
-        return view('siswa.index', compact('siswa'));
+        // ======================
+        // GURU PEMBIMBING (ROLE 3)
+        // ======================
+        if ($user->role_id == 3 && $user->guruPembimbing) {
+
+            $siswa = Siswa::with(['jurusan', 'mitra', 'guruPembimbing', 'user'])
+                ->where('gurupembimbing_id', $user->guruPembimbing->id)
+                ->orderBy('nama')
+                ->get();
+
+            return view('siswa.index', compact('siswa'));
+        }
+
+        // ======================
+        // KAPRODI (ROLE 1)
+        // ======================
+        if ($user->role_id == 1 && $user->kaprodi) {
+
+            $siswa = Siswa::with(['jurusan', 'mitra', 'guruPembimbing', 'user'])
+                ->where('jurusan_id', $user->kaprodi->jurusan_id)
+                ->orderBy('nama')
+                ->get();
+
+            return view('siswa.index', compact('siswa'));
+        }
+
+        // ======================
+        // ADMIN & HUMAS
+        // ======================
+        if (in_array($user->role_id, [2, 5])) {
+
+            $siswa = Siswa::with(['jurusan', 'mitra', 'guruPembimbing', 'user'])
+                ->orderBy('nama')
+                ->get();
+
+            return view('siswa.index', compact('siswa'));
+        }
+
+        abort(403, 'Anda tidak memiliki akses ke data siswa');
     }
-
     /**
      * Form tambah siswa
      */
@@ -172,45 +204,49 @@ class SiswaController extends Controller
     }
 
 
-    public function siswaPerJurusan($id)
+    public function siswaPerJurusan($jurusan_id)
     {
         $user = Auth::user();
+        //dd($user->id, $user->email, $user->role_id);
 
         // ================================
-        // CEK ROLE & JURUSAN USER
+        // CEK AKSES ROLE
         // ================================
-        if ($user->role_id == 3) {
-            // GURU PEMBIMBING
-            if (!$user->guruPembimbing) {
-                abort(403, 'Akses ditolak');
-            }
 
-            $jurusanUserId = $user->guruPembimbing->jurusan_id;
-        } elseif ($user->role_id == 1) {
-            // KAPRODI
+        // KAPRODI
+        if ($user->role_id == 1) {
             if (!$user->kaprod) {
-                abort(403, 'Akses ditolak');
+                abort(403, 'Data kaprodi tidak ditemukan');
             }
 
-            $jurusanUserId = $user->kaprod->jurusan_id;
-        } else {
-            abort(403, 'Akses ditolak');
+            // Paksa pakai jurusan milik kaprodi
+            $jurusan_id = $user->kaprod->jurusan_id;
         }
 
-        // ================================
-        // CEK URL ID vs JURUSAN USER
-        // ================================
-        if ((int) $id !== (int) $jurusanUserId) {
-            abort(403, 'Anda tidak berhak mengakses jurusan ini');
+        // GURU PEMBIMBING
+        elseif ($user->role_id == 3) {
+            if (!$user->guruPembimbing) {
+                abort(403, 'Data guru pembimbing tidak ditemukan');
+            }
+
+            $jurusan_id = $user->guruPembimbing->jurusan_id;
+        }
+
+        // ADMIN
+        elseif ($user->role_id == 5) {
+            // admin bebas, pakai jurusan dari URL
+        } else {
+            abort(403, 'Anda tidak memiliki akses');
         }
 
         // ================================
         // AMBIL DATA
         // ================================
-        $jurusan = Jurusan::findOrFail($id);
 
-        $siswa = Siswa::with(['jurusan', 'mitra', 'gurupembimbing', 'user'])
-            ->where('jurusan_id', $id)
+        $jurusan = Jurusan::findOrFail($jurusan_id);
+
+        $siswa = Siswa::with(['jurusan', 'mitra', 'guruPembimbing', 'user'])
+            ->where('jurusan_id', $jurusan_id)
             ->get();
 
         return view('siswa.per_jurusan', compact('siswa', 'jurusan'));

@@ -25,24 +25,37 @@
 
                         <thead class="table-dark text-center">
                             <tr>
+
                                 <th>No</th>
                                 <th>NIS</th>
                                 <th>Nama</th>
                                 <th>Kelas</th>
+                                <th>Alamat Siswa</th>
+                                <th>Email</th>
+                                <th>Telp</th>
                                 <th>Guru Pembimbing</th>
-                                <th>Mitra PKL</th>
+                                <th>Tempat PKL</th>
+                                <th>Bidang</th>
+                                <th>Alamat PKL</th>
                             </tr>
                         </thead>
 
                         <tbody>
                             @foreach ($siswa as $s)
                                 <tr>
+
                                     <td class="text-center">{{ $loop->iteration }}</td>
                                     <td>{{ $s->nis }}</td>
                                     <td>{{ $s->nama }}</td>
                                     <td>{{ $s->kelas }}</td>
-                                    <td>{{ $s->gurupembimbing->nama_guru ?? '-' }}</td>
-                                    <td>{{ $s->mitra->nama_mitra ?? '-' }}</td>
+                                    <td style="min-width:180px">{{ $s->alamat }}</td>
+                                    <td>{{ $s->user->email ?? '-' }}</td>
+                                    <td>{{ $s->telp }}</td>
+                                    <td>{{ $s->gurupembimbing->nama_guru }}</td>
+                                    <td>{{ $s->mitra->nama_mitra }}</td>
+                                    <td>{{ $s->mitra->bidang }}</td>
+                                    <td style="min-width:180px">{{ $s->mitra->alamat }}</td>
+
                                 </tr>
                             @endforeach
                         </tbody>

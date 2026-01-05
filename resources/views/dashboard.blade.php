@@ -272,9 +272,8 @@
                             <a class="nav-link text-white d-flex align-items-center"
                                 href="{{ route('siswa.per_jurusan', auth()->user()->kaprod->jurusan_id) }}">
                                 <i class="bi bi-people-fill nav-icon me-2"></i>
-                                <span>Data Siswa </span>
+                                <span>Data Siswa</span>
                             </a>
-
 
                             {{-- DATA GURU PEMBIMBING --}}
                             <a class="nav-link text-white d-flex align-items-center"
@@ -395,9 +394,9 @@
 
                             {{-- DATA SISWA --}}
                             <a class="nav-link text-white d-flex align-items-center"
-                                href="{{ route('siswa.per_jurusan', auth()->user()->guruPembimbing->jurusan_id) }}">
+                                href="{{ route('siswa.index') }}">
                                 <i class="bi bi-people-fill nav-icon me-2"></i>
-                                <span>Data Siswa Jurusan</span>
+                                <span>Data Siswa</span>
                             </a>
 
 
@@ -406,11 +405,13 @@
                             </div>
 
                             {{-- Halaman Jurnal_perJurusan --}}
-                            <a class="nav-link text-white d-flex align-items-center"
-                                href="{{ route('jurnal.per_jurusan', auth()->user()->guruPembimbing->jurusan_id) }}">
-                                <i class="bi bi-journal-text nav-icon me-2"></i>
-                                <span>Jurnal Siswa</span>
-                            </a>
+                            @if (auth()->user()->role_id == 3)
+                                <a class="nav-link text-white" href="{{ route('jurnal.index') }}">
+                                    <i class="bi bi-journal-text me-2"></i>
+                                    <span> Jurnal Siswa </span>
+                                </a>
+                            @endif
+
 
                             {{-- halaman nilai --}}
                             <a class="nav-link text-white d-flex align-items-center"

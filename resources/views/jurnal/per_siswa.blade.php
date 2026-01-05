@@ -8,6 +8,8 @@
             Jurnal {{ $siswa->nama }}
         </h1>
 
+        
+
         {{-- <a href="{{ route('jurnal.create') }}" class="btn btn-primary mb-3">
             <i class="bi bi-plus-circle"></i> Tambah Jurnal
         </a> --}}
@@ -84,7 +86,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5" class="text-center text-muted">
+                                    <td colspan="6" class="text-center text-muted">
                                         Belum ada jurnal
                                     </td>
                                 </tr>

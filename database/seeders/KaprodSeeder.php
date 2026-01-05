@@ -72,7 +72,7 @@ class KaprodSeeder extends Seeder
                     'name'     => $data['nama_kaprod'],
                     'email'    => $data['email'],
                     'password' => Hash::make('kaprod123'),
-                    'role_id'  => 2, // PASTIKAN role_id 2 = Kaprodi
+                    'role_id'  => 1, // PASTIKAN role_id 1 = Kaprodi
                 ]
             );
 

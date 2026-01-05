@@ -9,6 +9,8 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
+    use HasFactory, Notifiable;
+    
     protected $fillable = [
         'name',
         'username',
@@ -42,6 +44,7 @@ class User extends Authenticatable
     {
         return $this->hasOne(Kaprod::class);
     }
+    
 
     public function humas()
     {
